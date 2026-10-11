@@ -8,11 +8,9 @@ An API made with Flask(Python) to manage tasks and users.
 - Lint: ruff check .
 
 ## Architecture
-- routes/ -- contains the route handlers needed for the API to process HTTP requests and return HTTP responses
-- services/ -- contains the business logic 
-- tests/ -- contains tests for each service
+- Routes call services; services call repositories; never skip layers
 - Use AppError subclasses from @utils/errors.py
-- Follow the service pattern in @services/users.py for all services
+- Follow the service pattern in @services/users.py for all new services
 
 ## Conventions
 - Ensure that all functions in services/ use type hints and Google-style docstrings
