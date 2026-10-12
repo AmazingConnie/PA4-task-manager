@@ -6,6 +6,7 @@ An API made with Flask(Python) to manage tasks and users.
 - Install: pip install -r requirements.txt
 - Test: pytest -v
 - Lint: ruff check .
+- Test quickly: pytest -q
 
 ## Architecture
 - Routes call services; services call repositories; never skip layers
@@ -17,8 +18,12 @@ An API made with Flask(Python) to manage tasks and users.
 - Follow the pattern in @services/users.py as an example for error handling
 - Ensure that all functions in services/ use error handling from @util/errors.py
 - Every endpoint should have a corresponding test in tests/
-- Run pytest -v after every change made during a code session
 
 ## Do Not Touch
 - Do not modify existing tests/ files without asking for permission first 
 - Do not add new packages without updating requirements.txt
+- Do not add error handling inside routes in @routes/api.py
+- Do not modify existing test cases for each test file in tests/
+- Do not touch utils/
+- Do not add type hints or docstrings to routes in @routes/api.py
+

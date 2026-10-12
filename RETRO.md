@@ -1,0 +1,15 @@
+# RETRO — Retrospective and CLAUDE.md Update 
+
+## 1. Where did amending a plan prevent a problem that would have required a revert? Cite the session number from PLAN_LOG.md.
+In session 2 of task 1, Claude proposed adding error handling inside the update_task_route in routes/api.py. Letting update_task_route() do error checking instead of the update_task() function it calls would have broken the canonical pattern used to create each API route. Additionally, it would have been difficult to revert the error handling in update_task_route() without breaking a return code or the entire API. Amending this plan in session 2 prevented me from having to revert a change that would have taken hours to resolve.
+
+## 2. Describe the one case where the output did not match the amended plan. What does that tell you about the reliability boundary of Plan Mode?
+In session 2 of task 1, I was able to move the error handling to the update_task() function. However, Claude implemented the error handling using a function called isInstance() to check if a priority is a number or a bool. If the priority was neither of those types or was not in the range [1, 5], update_task() would raise a ValidationError. This same function was used in my modified create_task() function as well.
+
+I was surprised that Claude checked to see if my priority was a boolean value as I had specified to Claude that priority is an integer between 1 and 5 in session 1. This example shows that the reliability boundary of Plan Mode can bring up unexpected results even if you give Claude a detailed response or amendment in plan mode. 
+
+## 3. Which subagent boundary was most important to enforce? Why? What would have happened if you had let Claude implement the feature in a single session?
+In Task 2, the subagent boundary that was most important to enforce was for subagents 2 to not add any endpoints until the storage dictionary and the service layer were fully implemented. I added this boundary to make sure that subagent 2 did not add new endpoints immediately right after it created the services needed for those endpoints. As I showed in Task 1 Session 2, Claude had planned on error checking inside the update_task_route() before I told it to do it inside the update_task() function instead. Had Claude gone straight to adding endpoints after writing the services, the endpoints would have contained unnecessary information such as docstrings, error checks, and type hints. 
+
+## 4. Both techniques are advisory (~80% reliable). Name the specific rule or constraint from Task 2 that you would most want to enforce mechanically. Describe in one sentence what a hook that enforces it would do.
+A rule or constraint that I would most want to enforce mechanically would be asking Claude to run 'pytest -q' after every subagent action to make sure no prior tests broke. This is something I had to check over and over again in another terminal. A hook that enforces it would run 'pytest -q' and display the results after every change made by Claude. This way, I do not have to ask Claude to run 'pytest -q' after every action.
