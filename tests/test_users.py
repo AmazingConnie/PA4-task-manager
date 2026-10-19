@@ -62,3 +62,29 @@ def test_get_user_after_pref_update(pref):
 def test_create_user_invalid_pref():
     with pytest.raises(ValidationError):
         create_user("Eve", "eve@example.com", notification_pref="fax")
+
+def test_create_user_default_pref():
+    result = create_user("Frank", "frank@example.com")
+    assert result["notification_pref"] == "none"
+    assert get_user(result["id"]) == result
+
+@pytest.mark.parametrize("name", ["", "   ", None])
+def test_create_user_invalid_name(name):
+    with pytest.raises(ValidationError) as exc_info:
+        create_user(name, "grace@example.com")
+    assert exc_info.value.status_code == 422
+    with pytest.raises(NotFoundError):
+        get_user(3)
+
+@pytest.mark.parametrize("email", ["", "no-at-sign", None])
+def test_create_user_invalid_email(email):
+    with pytest.raises(ValidationError) as exc_info:
+        create_user("Heidi", email)
+    assert exc_info.value.status_code == 422
+    with pytest.raises(NotFoundError):
+        get_user(3)
+
+def test_create_user_assigns_next_id():
+    first = create_user("Ivan", "ivan@example.com")
+    second = create_user("Judy", "judy@example.com")
+    assert second["id"] == first["id"] + 1

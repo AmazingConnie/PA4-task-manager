@@ -1,5 +1,6 @@
 from flask import Blueprint, jsonify, request
 from services.products import create_product
+from services.tags import create_tag
 from services.tasks import get_task, create_task, process_order, update_task, get_tasks_by_priority
 from services.users import get_user, get_pref, update_pref
 from utils.errors import AppError
@@ -45,3 +46,8 @@ def update_pref_route(user_id):
 def create_product_route():
     data = request.get_json(silent=True) or {}
     return jsonify(create_product(data.get("name"), data.get("price"))), 201
+
+@api.route("/tags", methods=["POST"])
+def create_tag_route():
+    data = request.get_json(silent=True) or {}
+    return jsonify(create_tag(data.get("name"))), 201

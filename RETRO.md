@@ -1,4 +1,4 @@
-# RETRO — Retrospective and CLAUDE.md Update 
+# RETRO — Retrospective and CLAUDE.md Update (WEEK 05)
 
 ## 1. Where did amending a plan prevent a problem that would have required a revert? Cite the session number from PLAN_LOG.md.
 In session 2 of task 1, Claude proposed adding error handling inside the update_task_route in routes/api.py. Letting update_task_route() do error checking instead of the update_task() function it calls would have broken the canonical pattern used to create each API route. Additionally, it would have been difficult to revert the error handling in update_task_route() without breaking a return code or the entire API. Amending this plan in session 2 prevented me from having to revert a change that would have taken hours to resolve.
@@ -13,3 +13,20 @@ In Task 2, the subagent boundary that was most important to enforce was for suba
 
 ## 4. Both techniques are advisory (~80% reliable). Name the specific rule or constraint from Task 2 that you would most want to enforce mechanically. Describe in one sentence what a hook that enforces it would do.
 A rule or constraint that I would most want to enforce mechanically would be asking Claude to run 'pytest -q' after every subagent action to make sure no prior tests broke. This is something I had to check over and over again in another terminal. A hook that enforces it would run 'pytest -q' and display the results after every change made by Claude. This way, I do not have to ask Claude to run 'pytest -q' after every action.
+
+------------------------------------------------------------------------------------------
+# RETRO — Retrospective and CLAUDE.md Update (WEEK 06)
+
+## 1. Which of your three commands saved the most prompt-writing effort? Cite the COMMAND_LOG.md row. What would the equivalent ad-hoc prompt have looked like, and why is the command better?
+In PA6 Task 1, the command that saved me the most prompt-writing effort is probably the second command /scaffold-endpoints. This command allowed me to write one endpoint easily instead of having to prompt Claude to specify the service and the all the functions needed to create the endpoint. The ad-hoc prompt would have been written as: "Add a POST endpoint for new service named tags. Follow the canonical service pattern in services/users.py to create it. Add the corresponding endpoint to routes/api.py. Do not add type hints or Google-style docstrings to the endpoint."
+
+## 2. Describe what happened during the Part B bypass attempts. Which vector succeeded in bypassing the hook before your fix? What does that reveal about the gap between 'the rule is in settings.json' and 'the rule is enforced'?
+Vector 2 succeeded in bypassing the hook before my fix. I asked it to add a new AppError class to utils/errors.py using a Bash tool. Claude was able to bypass the hook and add the class using a shell command. I fixed the bypass by forcing Claude to check the command against a regex containing bash commands such as sed -i and mv before proceeding with the task.
+
+This encounter revealed that Claude can still bypass a hook even if the rule is in settings.json and is ready to fire. When the hook is enforced through strict pattern checking, only then can the hook block Claude's actions. Despite these fixes, Claude can still find ways to write to the file by hiding the command in a path or variable. Efforts like these show that hooks can have limitations. 
+
+## 3. Identify one rule that remains in your CLAUDE.md Do-not-touch section and has NOT been graduated to the hook. Explain why you left it advisory and under what condition you would graduate it.
+"Do not add dependencies without updating requirements.txt" is the one rule that has NOT been graduated into a hook. I left it as advisory in CLAUDE.md because requirements.txt contains the dependencies needed for the project. So far I cannot think of a hook I can make that can install dependencies and write it to requirements.txt. Additionally, another user will have trouble running my project if it lacks a dependency needed to run parts of the project (i.e. I installed ruff on my system, but I did not add it to requirements.txt.).
+
+## 4. Describe one rule you wanted to enforce but could not implement as a PreToolUse hook. Why was PreToolUse the wrong event or the wrong mechanism? What would the right mechanism be?
+Linting and running tests was the one rule I wanted to enforce but could not implement as a PreToolUse hook. I did not want to run pytest -q and ruff lint . repeatedly in the terminal. However, PreToolUse was the wrong event for this rule as PreToolUse is meant to block dangerous actions. Any attempt to run pytest -q would have been blocked. The right event to use for testin g and linting would have been PostToolUse. PostToolUse events would run tests and lint after making changes to the code. If any test case failed, Claude would fix the problem and make sure that all test cases pass.
