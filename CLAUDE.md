@@ -32,3 +32,14 @@ A new team member would add a rule to it by adding a new sensitive file path in 
 - /audit-errors: This command helps you look for any raw errors in a service file and replaces them with errors from the AppError subclass. Only use for files in services/
 - /scaffold-endpoints: This command helps you create a new endpoint by passing in the name of the new service and the HTTP method you want for that service's endpoint.
 - /fill-tests: This command helps you add pytest cases for untested functions in a services/ file.
+
+## Git Conventions
+- Use conventional commit types: feat, fix, docs, refactor, test, chore
+- Use commit scopes: services, routes, tests
+- Example: type(scope): subject, type: subject
+- Write the commit subject in imperative mood, under 72 characters
+- Run pytest -q before every commit
+- Branch names: feat/*, fix/*, docs/*
+- Never force-push to main
+- Never push to main without asking
+- Never bypass hooks 
