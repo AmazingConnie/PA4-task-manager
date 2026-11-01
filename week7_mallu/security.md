@@ -1,0 +1,10 @@
+1. Two concrete risks that are created by the filesystem server having access to every file under the path specified are the possibility that the filesystem could write destructive code to one of the files in the services/ folder and the exposure of credential files such as .env. 
+
+Giving the server write access to many files could allow a bad actor to write a malicious prompt that causes the server to make destructive writes to several files. To prevent this, make sure to define a path that limits the server's access to only a few files.
+
+The exposure of credential files such as .env through the filesystem's broad reach can also lead a malicious actor to exfiltrate credentials through the server's read operations. To prevent this, add safeguards such as a hook that blocks a user from reading sensitive files such as .env and 
+.config. 
+
+2. An attacker could inject malicious instructions inside their prompt through a process known as Prompt Injection. The attacker could drop all tasks,  modify all entries to have the status marked as 'completed', or mark a nonexistent task as 'completed.' by hiding it in their prompt. Using strict input validation can prevent this from happening by rejecting any attempts to change a task's status if the status does not exist in the status enum. Tool design could also prevent malicious instructions from being executed by using a hook or regex pattern to scan for dangerous commands before executing them.
+
+3. If the MCP server crashes mid-request, any data that was being written or read to and from a file could also be lost with it. A production-grade MCP server should handle partial failures by using features such as file staging for saving temporary copies of a modified file, graceful shutdowns to prevent memory leaks, raising custom exceptions to prevent crashes, and enforcing timeouts to flush out leaks. 

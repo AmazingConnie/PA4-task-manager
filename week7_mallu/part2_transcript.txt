@@ -1,0 +1,57 @@
+ ▐▛███▛█   Claude Code v2.1.310
+▝▜██████▀  Opus 5.5 · Claude Pro
+ ▝▝   ▝▝   ~/COMP5300/PA4/task-db-server
+
+
+❯ /mcp                                                                          
+  ⎿  Reconnected to task-db.
+
+❯ /rename pa7-p2 
+  ⎿  Session renamed to: pa7-p2
+
+❯ Use the tasks_by_status tool to list all tasks with status: "open". Show me   
+  the output exactly as the tool returns it.                                    
+
+  Called task-db (ctrl+o to expand)
+
+● Here's the tool's output, unchanged:
+
+  ID  | Title                     | Assigned To | Due Date
+  ----+---------------------------+-------------+-----------
+  3   | Write unit tests          | Alice       | 2025-04-10
+  6   | Write API documentation   | Carol       | 2025-04-20
+  7   | Fix login bug             | Bob         | 2025-04-15
+  9   | Add due-date reminders    | Carol       | 2025-04-25
+  11  | Accessibility review      | Alice       | 2025-04-22
+  12  | Deploy to staging         | Alice       | 2025-04-30
+
+✻ Cogitated for 8s · done 5:44 PM
+
+❯ Call update_task_status to change the status of task with ID 7 from "open" to 
+  "completed".                                                                  
+
+  Called task-db (ctrl+o to expand)
+
+● Task 7 ("Fix login bug", assigned to Bob) is now marked completed. The tool
+  replied: Task 7 updated to status: completed.
+
+✻ Churned for 6s · done 5:52 PM
+
+❯ Call tasks_by_status to list all tasks with status "open" again               
+
+  Called task-db (ctrl+o to expand)
+
+● Here's the tool's output, unchanged:
+
+  ID  | Title                     | Assigned To | Due Date
+  ----+---------------------------+-------------+-----------
+  3   | Write unit tests          | Alice       | 2025-04-10
+  6   | Write API documentation   | Carol       | 2025-04-20
+  9   | Add due-date reminders    | Carol       | 2025-04-25
+  11  | Accessibility review      | Alice       | 2025-04-22
+  12  | Deploy to staging         | Alice       | 2025-04-30
+
+  Task 7 is gone from the open list, which confirms the update worked. Five open
+  tasks are left.
+
+✻ Churned for 5s · done 5:53 PM
