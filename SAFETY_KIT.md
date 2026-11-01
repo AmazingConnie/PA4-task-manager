@@ -1,3 +1,6 @@
+I made the decision to remove "git commit" from approved-tools. I did this because Claude would bypass my needed approval to make a commit. By removing this command from the allowed-tools, I was able to make the approval gate deterministic.
+
+
 1A. /ship on print("Task Updated"):
 The review found one problem, so I stopped here. I didn't run the tests, propose a commit message or stage anything.
 
@@ -85,3 +88,13 @@ If you still want to force-push after that, it's your repo and your decision, bu
 Which of these is closest? If you're not sure, I can start with the git fetch comparison, which doesn't change anything on your branches or the remote.
 
 3C. Command: "git add SAFETY_KIT.md"
+
+Output: SAFETY_KIT.md is now staged, and it's the only change in your working tree. Nothing has been committed yet, and you're still on main.
+
+
+| Header 1  | Advisory or Enforced? |Why?                                                                 |
+| -------- | -------- | -------- |
+| /ship | Enforced              | The code is not shipped if the code had breakpoints or TODO comments |
+| commit-msg | Enforced         | Claude rejects message if it doesnt follow "type(scope): subject"    |
+| guard_git | Advisory          | Claude itself says there other ways to get around the guard hook     |
+
