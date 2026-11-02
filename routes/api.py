@@ -3,6 +3,7 @@ from services.products import create_product
 from services.tags import create_tag
 from services.tasks import get_task, create_task, process_order, update_task, get_tasks_by_priority
 from services.tasks import archive_task
+from services.tasks import search_tasks
 from services.users import get_user, get_pref, update_pref
 from utils.errors import AppError
 
@@ -15,6 +16,12 @@ def handle_app_error(e):
 @api.route("/tasks/<int:task_id>", methods=["GET"])
 def get_task_route(task_id):
     return jsonify(get_task(task_id))
+
+@api.route("/tasks/search", methods=["GET"])
+def search_tasks_route():
+    include_archived = request.args.get(
+        "include_archived", default=False, type=lambda value: value.lower() == "true")
+    return jsonify(search_tasks(request.args.get("q"), include_archived))
 
 @api.route("/tasks", methods=["GET"])
 def list_tasks_by_priority_route():

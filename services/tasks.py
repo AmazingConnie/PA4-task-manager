@@ -97,6 +97,26 @@ def get_tasks_by_priority(priority: int, include_archived: bool = False) -> list
     return [task for task in TASKS.values()
             if task["priority"] == priority and (include_archived or not task["archived"])]
 
+def search_tasks(query: str, include_archived: bool = False) -> list[dict]:
+    """Retrieve all tasks whose title contains a search term.
+
+    Args:
+        query: The text to look for, matched case-insensitively.
+        include_archived: Whether to include archived tasks. Defaults to False.
+
+    Returns:
+        A list of task records whose title contains the query.
+        Empty if no tasks match.
+
+    Raises:
+        ValidationError: If query is empty.
+    """
+    if not query or not query.strip():
+        raise ValidationError("query", "cannot be empty")
+    term = query.lower()
+    return [task for task in TASKS.values()
+            if term in task["title"].lower() and (include_archived or not task["archived"])]
+
 def create_task(title: str, user_id: int, priority: int = 3) -> dict:
     """Create a new task.
 
