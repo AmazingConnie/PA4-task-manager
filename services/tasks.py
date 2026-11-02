@@ -113,7 +113,7 @@ def search_tasks(query: str, include_archived: bool = False) -> list[dict]:
     """
     if not query or not query.strip():
         raise ValidationError("query", "cannot be empty")
-    term = query.lower()
+    term = query.strip().lower()
     return [task for task in TASKS.values()
             if term in task["title"].lower() and (include_archived or not task["archived"])]
 

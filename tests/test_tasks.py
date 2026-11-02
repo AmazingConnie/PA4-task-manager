@@ -209,3 +209,11 @@ def test_search_tasks_route_include_archived_true(client):
     response = client.get("/api/tasks/search?q=groceries&include_archived=true")
     assert response.status_code == 200
     assert [t["id"] for t in response.get_json()] == [1]
+
+def test_search_tasks_ignores_surrounding_whitespace():
+    assert [t["id"] for t in search_tasks("  report  ")] == [2]
+
+def test_search_tasks_route_ignores_surrounding_whitespace(client):
+    response = client.get("/api/tasks/search?q=%20report%20")
+    assert response.status_code == 200
+    assert [t["id"] for t in response.get_json()] == [2]
