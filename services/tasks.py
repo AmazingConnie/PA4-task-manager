@@ -2,9 +2,12 @@ from services.users import USERS
 from utils.errors import NotFoundError, ValidationError
 
 TASKS: dict[int, dict] = {
-    1: {"id": 1, "title": "Buy groceries",  "done": False, "user_id": 1, "priority": 3},
-    2: {"id": 2, "title": "Write report",   "done": False, "user_id": 1, "priority": 3},
-    3: {"id": 3, "title": "Call dentist",   "done": True,  "user_id": 2, "priority": 3},
+    1: {"id": 1, "title": "Buy groceries",  "done": False, "user_id": 1, "priority": 3,
+        "archived": False},
+    2: {"id": 2, "title": "Write report",   "done": False, "user_id": 1, "priority": 3,
+        "archived": False},
+    3: {"id": 3, "title": "Call dentist",   "done": True,  "user_id": 2, "priority": 3,
+        "archived": False},
 }
 
 def process_order(task_id: int) -> dict:
@@ -23,6 +26,24 @@ def process_order(task_id: int) -> dict:
         raise NotFoundError("Task")
     task = TASKS[task_id]
     task["done"] = True
+    return task
+
+def archive_task(task_id: int) -> dict:
+    """Mark a task as archived.
+
+    Args:
+        task_id: The unique identifier for the task.
+
+    Returns:
+        The updated task record.
+
+    Raises:
+        NotFoundError: If no task exists with the given ID.
+    """
+    if task_id not in TASKS:
+        raise NotFoundError("Task")
+    task = TASKS[task_id]
+    task["archived"] = True
     return task
 
 def get_task(task_id: int) -> dict:
@@ -57,11 +78,12 @@ def get_tasks_by_user(user_id: int) -> list[dict]:
         raise NotFoundError("User")
     return [task for task in TASKS.values() if task["user_id"] == user_id]
 
-def get_tasks_by_priority(priority: int) -> list[dict]:
+def get_tasks_by_priority(priority: int, include_archived: bool = False) -> list[dict]:
     """Retrieve all tasks with a given priority.
 
     Args:
         priority: Urgency from 1 (urgent) to 5 (low).
+        include_archived: Whether to include archived tasks. Defaults to False.
 
     Returns:
         A list of task records with the priority.
@@ -72,7 +94,8 @@ def get_tasks_by_priority(priority: int) -> list[dict]:
     """
     if priority not in range(1, 6):
         raise ValidationError("priority", "must be an integer between 1 and 5")
-    return [task for task in TASKS.values() if task["priority"] == priority]
+    return [task for task in TASKS.values()
+            if task["priority"] == priority and (include_archived or not task["archived"])]
 
 def create_task(title: str, user_id: int, priority: int = 3) -> dict:
     """Create a new task.
@@ -96,8 +119,8 @@ def create_task(title: str, user_id: int, priority: int = 3) -> dict:
     if not isinstance(priority, int) or isinstance(priority, bool) or not 1 <= priority <= 5:
         raise ValidationError("priority", "must be an integer between 1 and 5")
     new_id = max(TASKS.keys()) + 1
-    TASKS[new_id] = {"id": new_id, "title": title,
-                     "done": False, "user_id": user_id, "priority": priority}
+    TASKS[new_id] = {"id": new_id, "title": title, "done": False,
+                     "user_id": user_id, "priority": priority, "archived": False}
     return TASKS[new_id]
 
 def update_task(task_id: int, priority: int) -> dict:
