@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, request
 from services.products import create_product
 from services.tags import create_tag
 from services.tasks import get_task, create_task, process_order, update_task, get_tasks_by_priority
+from services.tasks import archive_task
 from services.users import get_user, get_pref, update_pref
 from utils.errors import AppError
 
@@ -17,7 +18,9 @@ def get_task_route(task_id):
 
 @api.route("/tasks", methods=["GET"])
 def list_tasks_by_priority_route():
-    return jsonify(get_tasks_by_priority(request.args.get("priority", type=int)))
+    include_archived = request.args.get(
+        "include_archived", default=False, type=lambda value: value.lower() == "true")
+    return jsonify(get_tasks_by_priority(request.args.get("priority", type=int), include_archived))
 
 @api.route("/tasks", methods=["POST"])
 def create_task_route():
@@ -28,6 +31,10 @@ def create_task_route():
 def update_task_route(task_id):
     data = request.get_json(silent=True) or {}
     return jsonify(update_task(task_id, data.get("priority")))
+
+@api.route("/tasks/<int:task_id>/archive", methods=["POST"])
+def archive_task_route(task_id):
+    return jsonify(archive_task(task_id))
 
 @api.route("/users/<int:user_id>", methods=["GET"])
 def get_user_route(user_id):
